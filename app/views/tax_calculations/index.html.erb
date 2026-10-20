@@ -1,0 +1,169 @@
+<style>
+  .calculator-container {
+    max-width: 600px;
+    margin: 60px auto;
+    padding: 0 20px;
+    font-family: system-ui, sans-serif;
+    color: #253047;
+  }
+
+  .calculator-card {
+    background: #fff;
+    border: 1px solid #e2e5ea;
+    border-radius: 12px;
+    padding: 32px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  }
+
+  .calculator-container h1 {
+    margin-bottom: 8px;
+    font-size: 28px;
+  }
+
+  .subtitle {
+    color: #667085;
+    margin-bottom: 28px;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  .form-group input {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd0d8;
+    border-radius: 6px;
+    font-size: 16px;
+  }
+
+  .calculate-button {
+    width: 100%;
+    padding: 13px;
+    background: #2459a6;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .calculate-button:hover {
+    background: #194681;
+  }
+
+  .error-message {
+    margin-bottom: 20px;
+    padding: 12px;
+    background: #fff0f0;
+    color: #b42318;
+    border-radius: 6px;
+  }
+
+  .results {
+    margin-top: 28px;
+    padding: 24px;
+    background: #f7f9fc;
+    border-radius: 8px;
+  }
+
+  .results h2 {
+    margin-top: 0;
+    font-size: 20px;
+  }
+
+  .result-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid #e2e5ea;
+  }
+
+  .result-row:last-child {
+    border-bottom: none;
+  }
+
+  .result-value {
+    font-weight: 600;
+    text-align: right;
+  }
+
+  .disclaimer {
+    margin-top: 24px;
+    color: #667085;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+</style>
+
+<main class="calculator-container">
+  <h1>NZ Income Tax Calculator</h1>
+  <p class="subtitle">Estimate your annual income tax using New Zealand's 2025 tax rates.</p>
+
+  <div class="calculator-card">
+
+    <%= form_with url: tax_calculations_path, method: :post, local: true, data: { turbo: false } do %>
+
+      <div class="form-group">
+        <%= label_tag :income, "Annual income (NZD)" %>
+
+        <%= number_field_tag :income, @income,
+            min: 0,
+            step: "0.01",
+            placeholder: "e.g. 50000.00",
+            required: true %>
+      </div>
+
+      <% if @error.present? %>
+        <div class="error-message" role="alert">
+          <%= @error %>
+        </div>
+      <% end %>
+
+      <%= submit_tag "Calculate Tax", class: "calculate-button" %>
+
+    <% end %>
+
+    <% if @result.present? %>
+      <section class="results" aria-live="polite">
+        <h2>Tax Estimate</h2>
+
+        <div class="result-row">
+          <span>Annual income</span>
+          <span class="result-value">
+            <%= number_to_currency(@income, unit: "NZ$", precision: 2) %>
+          </span>
+        </div>
+
+        <div class="result-row">
+          <span>Estimated income tax</span>
+          <span class="result-value">
+            <%= number_to_currency(@result[:total_tax], unit: "NZ$", precision: 2) %>
+          </span>
+        </div>
+
+        <div class="result-row">
+          <span>Effective tax rate</span>
+          <span class="result-value">
+            <%= number_to_percentage(@result[:effective_tax_rate], precision: 2) %>
+          </span>
+        </div>
+      </section>
+    <% end %>
+
+  </div>
+
+  <p class="disclaimer">
+    Estimates are based on the supplied 2025 New Zealand individual income
+    tax brackets. Other deductions, tax credits and levies are not included.
+  </p>
+</main>
