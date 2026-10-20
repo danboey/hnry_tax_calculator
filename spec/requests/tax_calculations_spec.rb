@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe 'Tax calculations', type: :request do
-
   describe 'POST /tax_calculations' do
     context 'with valid income' do
       it 'displays the calculated tax and effective tax rate' do

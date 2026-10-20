@@ -1,5 +1,4 @@
 class TaxCalculator
-
   TAX_BRACKETS = [
     { upper_limit: 15_600, rate: BigDecimal("0.105") },
     { upper_limit: 53_500, rate: BigDecimal("0.175") },
@@ -23,7 +22,7 @@ class TaxCalculator
     TAX_BRACKETS.each do |bracket|
       upper_limit = bracket[:upper_limit] || @income
 
-      taxable_income = [@income, upper_limit].min - lower_limit
+      taxable_income = [ @income, upper_limit ].min - lower_limit
       break if taxable_income <= 0
 
       total_tax += taxable_income * bracket[:rate]
@@ -50,5 +49,4 @@ class TaxCalculator
     raise ArgumentError, "Income must be finite" unless @income.finite?
     raise ArgumentError, "Income cannot be negative" if @income.negative?
   end
-
 end

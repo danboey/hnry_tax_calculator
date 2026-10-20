@@ -1,5 +1,4 @@
 class TaxCalculationsController < ApplicationController
-
   def index
   end
 
@@ -13,5 +12,4 @@ class TaxCalculationsController < ApplicationController
     @error = e.message
     render :index, status: :unprocessable_content
   end
-
 end
